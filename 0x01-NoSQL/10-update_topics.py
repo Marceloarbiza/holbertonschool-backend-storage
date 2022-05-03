@@ -10,5 +10,5 @@ import pymongo
 
 def update_topics(mongo_collection, name, topics):
     """ a comment """
-    return mongo_collection.find_one_and_update({'name': name},
-                                                {'$set': {'topics': topics}})
+    mongo_collection.update_many({'name': name},
+                                 {'$set': {'topics': topics}})
