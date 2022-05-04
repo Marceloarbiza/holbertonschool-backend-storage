@@ -93,4 +93,4 @@ class Cache:
             data = int(value.decode("utf-8"))
         except Exception:
             data = 0
-        return 
+        return
