@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""
-Main file
-"""
+
+'''
+A class that stores an instance of redis client
+as a private variable and stores data in redis.
+'''
+
 import redis
 from uuid import uuid4
 from typing import Union, Callable
@@ -56,35 +59,38 @@ def replay(method: Callable) -> None:
 
 
 class Cache:
-    """ class cache """
+    """defines methods that perform few common redis-py operations
+       on redis
+    """
     def __init__(self):
-        """ init redis """
+        """Instantiates a redis client"""
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
-        """ store redis """
-        redis_key = str(uuid.uuid4())
-        self._redis.set(redis_key, data)
-        return redis_key
+        """Stores the data in redis"""
+        r_key = str(uuid4())
+        self._redis.set(r_key, data)
+        return r_key
 
-    def get(self, key: str, fn: Callable = None) -> Union[str, bytes, int, float]:
-        """ get redis """
-        g = self._redis.get(key)
+    def get(self, key: str, fn: Callable = None):
+        """Calls a method that Converts redis data back to desired format"""
+        data = self._redis.get(key)
         if fn is not None:
-            return fn(g)
-        return g
+            return fn(data)
+        return data
 
-    def get_str(self, key: str) -> Optional[str]:
-        """ get redis str """
-        x = self._redis.get(key)
-        return x.decode("utf-8") if x is not None else None
+    def get_str(self, key: str) -> str:
+        """Parametises Cache.get to str"""
+        data = self._redis.get(key)
+        return data.decode("utf-8")
 
-    def get_int(self, key: str) -> Optional[int]:
-        """ get redis int """
-        x = self._redis.get(key)
-        return int(x.decode("utf-8")) if x is not None else None
-
-    def count_calls(self, arg: Callable) -> Callable:
-        """ count calls """
-
+    def get_int(self, key: str) -> int:
+        """Parametises Cache.get to int"""
+        try:
+            data = int(value.decode("utf-8"))
+        except Exception:
+            data = 0
+        return 
